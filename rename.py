@@ -51,7 +51,7 @@ class RenamePlugin(BeetsPlugin):
                         for f in dirlist[2]:
                             yield util.bytestring_path(os.path.join(util.syspath(dirlist[0]), util.syspath(f)))
                 else:
-                    for f in os.listdir(path):
+                    for f in os.listdir(util.syspath(path)):
                         if os.path.isfile(util.syspath(f)):
                             yield util.bytestring_path(f)
             else:
