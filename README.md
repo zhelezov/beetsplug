@@ -19,4 +19,4 @@ Options:
 
 #### Configuration
 
-* **template:** Path template. Default: `$track $title`
+* **template:** Path template relative to current file location. Default: `$track $title`
