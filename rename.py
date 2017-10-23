@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Rename audio files located outside of your music library
-according to a tag template. Act on current directory by default.
+"""The plugin lets you rename untracked audio files located outside of the
+beets music library according to a path template. It provides the rename
+command.
 """
 
 from beets.plugins import BeetsPlugin
@@ -37,7 +38,7 @@ class RenamePlugin(BeetsPlugin):
                 help=u'replace existing files')
         rename_cmd.parser.add_option(
                 u'-t', u'--template',
-                help=u'override default format template: "$track $title"')
+                help=u'override default template: "$track $title"')
         rename_cmd.func = self._rename
         return [rename_cmd]
 
