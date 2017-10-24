@@ -15,6 +15,8 @@ from beets import ui
 
 
 def joinpath(path1, path2):
+    """Like os.path.join() but returns bytes."""
+
     return util.bytestring_path(
             os.path.join(util.syspath(path1), util.syspath(path2)))
 
@@ -53,6 +55,8 @@ class RenamePlugin(BeetsPlugin):
         return [rename_cmd]
 
     def _find_files(self, paths, recursive=False):
+        """Generate paths to files to act on, yield bytes."""
+
         for path in paths:
             path = util.bytestring_path(path)
             if os.path.isdir(util.syspath(path)):
@@ -111,4 +115,4 @@ class RenamePlugin(BeetsPlugin):
                 diff = ui.colordiff(util.displayable_path(item.path),
                                     util.displayable_path(dest))
                 if diff[0] != diff[1]:
-                    ui.print_(u'    {}\n--> {}'.format(diff[0], diff[1]))
+                    self._log.info(u'{}\n     -> {}', diff[0], diff[1])
