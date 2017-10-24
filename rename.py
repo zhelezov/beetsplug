@@ -25,6 +25,10 @@ class RenamePlugin(BeetsPlugin):
     def commands(self):
         rename_cmd = ui.Subcommand('rename', help=u'Rename files based on template')
         rename_cmd.parser.add_option(
+                u'-L', u'--follow-links',
+                action='store_true', default=False,
+                help=u'follow symbolic links to files')
+        rename_cmd.parser.add_option(
                 u'-n', u'--dry-run',
                 action='store_true', default=False,
                 help=u'only show the changes to be made')
@@ -51,24 +55,37 @@ class RenamePlugin(BeetsPlugin):
                         for f in dirlist[2]:
                             yield util.bytestring_path(os.path.join(util.syspath(dirlist[0]), util.syspath(f)))
                 else:
-                    for f in os.listdir(util.syspath(path)):
-                        if os.path.isfile(util.syspath(f)):
-                            yield util.bytestring_path(f)
+                    direntries = [os.path.join(util.syspath(path), util.syspath(entry))
+                                  for entry in os.listdir(util.syspath(path))]
+                    files = [util.bytestring_path(f)
+                             for f in direntries
+                             if os.path.isfile(util.syspath(f))]
+                    files.sort(key=bytes.lower)
+                    for fpath in files:
+                            yield fpath
             else:
-                yield path
+                if os.path.isfile(util.syspath(path)):
+                    yield path
+                else:
+                    self._log.warning(u'Invalid path: {}', util.displayable_path(path))
 
     def _rename(self, lib, opts, args):
         if not args:
             raise ui.UserError(u'No targets supplied')
 
         for path in self._find_files(args, opts.recursive):
+            if os.path.islink(util.syspath(path)):
+                if opts.follow_links:
+                    path = util.bytestring_path(os.path.realpath(util.syspath(path)))
+                else:
+                    continue
             try:
                 item = Item.from_path(path)
             except ReadError:
                 # skip unrecognized file formats
                 continue
 
-            ext = util.text_string(os.path.splitext(path)[1])
+            ext = util.text_string(os.path.splitext(util.syspath(path))[1])
             template = opts.template if opts.template else self.config['template'].as_str()
             filename = util.bytestring_path(item.evaluate_template(template, for_path=True) + ext)
             dest = os.path.join(util.syspath(util.ancestry(item.path)[-1]), util.syspath(filename))
@@ -77,6 +94,7 @@ class RenamePlugin(BeetsPlugin):
                 util.mkdirall(dest)
                 util.move(item.path, dest, replace=opts.replace)
 
-            diff = (ui.colordiff(util.displayable_path(item.path), util.displayable_path(dest)))
-            if diff[0] != diff[1]:
-                ui.print_(u'{}\n  --> {}'.format(diff[0], diff[1]))
+            if not (util.samefile(item.path, dest) and opts.replace):
+                diff = (ui.colordiff(util.displayable_path(item.path), util.displayable_path(dest)))
+                if diff[0] != diff[1]:
+                    ui.print_(u'    {}\n--> {}'.format(diff[0], diff[1]))

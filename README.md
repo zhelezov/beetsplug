@@ -10,11 +10,12 @@ Usage: beet rename [options] PATH...
 
 Options:
   -h, --help            show this help message and exit
+  -L, --follow-links    follow symbolic links to files
   -n, --dry-run         only show the changes to be made
   -r, --recursive       scan directories recursively
   -R, --replace         replace existing files
   -t TEMPLATE, --template=TEMPLATE
-                        override default template "$track $title"
+                        override default template: "$track $title"
 ```
 
 #### Configuration
