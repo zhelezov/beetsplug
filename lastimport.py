@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Plugin providing a reference to the last successful import
-
-Imported items' ids a stored in a separate table in the database for further
-reference. Provides the command `lastimport'
+"""Plugin providing a reference to the last successful import. Imported items'
+ids are stored in a separate table in the database during import. Provides the
+command `lastimport' to list them.
 """
 
 from beets.plugins import BeetsPlugin
