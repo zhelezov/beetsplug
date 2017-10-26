@@ -18,10 +18,12 @@ def joinpath(path1, path2):
     """Like os.path.join() but returns bytes."""
 
     return util.bytestring_path(
-            os.path.join(util.syspath(path1), util.syspath(path2)))
+        os.path.join(util.syspath(path1), util.syspath(path2)))
 
 
 class RenamePlugin(BeetsPlugin):
+    """Rename files using their current tags"""
+
     def __init__(self):
         super(RenamePlugin, self).__init__()
 
@@ -30,27 +32,28 @@ class RenamePlugin(BeetsPlugin):
             })
 
     def commands(self):
-        rename_cmd = ui.Subcommand('rename',
-                help=u'Rename files based on template')
+        rename_cmd = ui.Subcommand(
+            'rename',
+            help=u'rename files based on template')
         rename_cmd.parser.add_option(
-                u'-L', u'--follow-links',
-                action='store_true', default=False,
-                help=u'follow symbolic links to files')
+            u'-L', u'--follow-links',
+            action='store_true', default=False,
+            help=u'follow symbolic links to files')
         rename_cmd.parser.add_option(
-                u'-n', u'--dry-run',
-                action='store_true', default=False,
-                help=u'only show the changes to be made')
+            u'-n', u'--dry-run',
+            action='store_true', default=False,
+            help=u'only show the changes to be made')
         rename_cmd.parser.add_option(
-                u'-r', u'--recursive',
-                action='store_true', default=False,
-                help=u'scan directories recursively')
+            u'-r', u'--recursive',
+            action='store_true', default=False,
+            help=u'scan directories recursively')
         rename_cmd.parser.add_option(
-                u'-R', u'--replace',
-                action='store_true', default=False,
-                help=u'replace existing files')
+            u'-R', u'--replace',
+            action='store_true', default=False,
+            help=u'replace existing files')
         rename_cmd.parser.add_option(
-                u'-t', u'--template',
-                help=u'override default template: "$track $title"')
+            u'-t', u'--template',
+            help=u'override default template: "$track $title"')
         rename_cmd.func = self._rename
         return [rename_cmd]
 
@@ -88,7 +91,7 @@ class RenamePlugin(BeetsPlugin):
             if os.path.islink(util.syspath(path)):
                 if opts.follow_links:
                     path = util.bytestring_path(
-                            os.path.realpath(util.syspath(path)))
+                        os.path.realpath(util.syspath(path)))
                 else:
                     continue
             try:
@@ -103,9 +106,9 @@ class RenamePlugin(BeetsPlugin):
                 template = self.config['template'].as_str()
             ext = util.text_string(os.path.splitext(util.syspath(path))[1])
             dest = joinpath(
-                    util.ancestry(item.path)[-1],
-                    util.bytestring_path(
-                        item.evaluate_template(template, for_path=True) + ext))
+                util.ancestry(item.path)[-1],
+                util.bytestring_path(
+                    item.evaluate_template(template, for_path=True) + ext))
 
             if not opts.dry_run:
                 util.mkdirall(dest)

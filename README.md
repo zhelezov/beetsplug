@@ -21,3 +21,15 @@ Options:
 #### Configuration
 
 * **template:** Path template relative to current file location. Default: `$track $title`
+
+## forcewrite
+
+This is a workaround some bug or plugin conflict because of which metadata
+is not written to disk after the import of Opus files (any files?). Usage
+of this plugin will ignore any configuration and forcefully write the
+changes to files.
+
+#### Configuration
+
+* whitelist: a list of file formats which trigger the write. All by
+  default: `['*']`
