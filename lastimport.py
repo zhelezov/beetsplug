@@ -10,10 +10,7 @@ from beets.ui import Subcommand, print_
 
 
 def import_hook(lib, paths):
-    """Store imported items' ids in a database table
-
-    The table is recreated after each import.
-    """
+    """Store imported items' ids in a database table"""
 
     paths = [normpath(path) for path in paths]
     with lib.transaction() as tx:
