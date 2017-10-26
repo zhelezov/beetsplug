@@ -31,5 +31,5 @@ changes to files.
 
 #### Configuration
 
-* whitelist: a list of file formats which trigger the write. All by
+* **whitelist:** a list of file formats which trigger the write. All by
   default: `['*']`
